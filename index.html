@@ -2,225 +2,211 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ボブの秘密基地</title>
+    <title>Arms depot - ボブの秘密基地</title>
     <style>
         :root {
             --bg-color: #1a1c1e;
-            --card-bg: #25282c;
             --accent-color: #00d4ff;
             --text-color: #e0e0e0;
-            --sub-text: #a0a0a0;
+            --card-bg: #25282c;
+            --border-color: #444;
+            --header-total-height: 165px; 
         }
 
-        body {
-            margin: 0;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            overflow-x: hidden;
+        html, body {
+            margin: 0; padding: 0; height: 100%;
+            background-color: var(--bg-color); color: var(--text-color);
+            overflow: hidden; font-family: sans-serif;
         }
 
-        /* ページ切り替え用 */
-        .page { display: none; min-height: 100vh; }
-        .page.active { display: block; }
-
-        /* --- トップページ --- */
-        #top-page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: radial-gradient(circle, #2c3e50 0%, #1a1c1e 100%);
-        }
-
-        .title-large {
-            font-size: 3rem;
-            letter-spacing: 0.2rem;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
+        /* 上部固定エリア */
+        .top-section {
+            height: var(--header-total-height);
+            background: var(--bg-color);
             border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
+            padding: 10px 20px; box-sizing: border-box;
+            position: relative; z-index: 100;
         }
 
-        .enter-btn {
-            padding: 15px 50px;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            text-decoration: none;
-            transition: 0.3s;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        .enter-btn:hover {
-            background: var(--accent-color);
-            color: #000;
-            box-shadow: 0 0 20px var(--accent-color);
-        }
-
-        .disclaimer {
-            margin-top: 5rem;
-            font-size: 0.8rem;
-            color: var(--sub-text);
-            max-width: 600px;
-            padding: 20px;
-        }
-
-        /* --- メインページ --- */
-        header {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #333;
-        }
-
-        .logo { font-weight: bold; font-size: 1.2rem; color: var(--accent-color); }
+        header h1 { margin: 5px 0; font-size: 1.4rem; color: var(--accent-color); }
         
-        nav a {
-            color: var(--text-color);
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 0.9rem;
+        .tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tab-btn {
+            padding: 8px 15px; background: #333; border: none;
+            color: var(--text-color); cursor: pointer; border-radius: 4px 4px 0 0;
+        }
+        .tab-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
+
+        /* 検索エリア */
+        .search-area { display: flex; gap: 10px; }
+        #search-column {
+            padding: 10px; background: #222; border: 1px solid var(--accent-color);
+            color: white; border-radius: 4px; cursor: pointer;
+        }
+        #search-box {
+            flex-grow: 1; padding: 10px; background: #222; 
+            border: 1px solid var(--accent-color); color: white; border-radius: 4px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+        /* データ表示エリア */
+        .main-content {
+            height: calc(100% - var(--header-total-height));
+            overflow: auto; padding: 0 20px 20px 20px; box-sizing: border-box;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+        table {
+            width: 100%; border-collapse: collapse;
+            background: var(--card-bg); font-size: 0.85rem; min-width: 900px;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s;
-            border: 1px solid #333;
-            text-decoration: none;
-            color: inherit;
+        thead th {
+            position: sticky; top: 0; background: #333;
+            color: var(--accent-color); z-index: 50;
+            padding: 12px 10px; border: 1px solid var(--border-color);
+            white-space: nowrap; box-shadow: 0 2px 2px rgba(0,0,0,0.5);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-        }
+        td { border: 1px solid var(--border-color); padding: 10px; white-space: nowrap; }
+        tr:nth-child(even) { background-color: #1e2124; }
+        tr:hover { background-color: #2c3e50; }
 
-        .card-img {
-            width: 100%;
-            height: 150px;
-            background: #444; /* 画像が生成されたらここを背景画像に差し替え可能 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
+        .info-box {
+            background: #2d3136; padding: 20px; border-left: 4px solid var(--accent-color);
+            line-height: 1.8; white-space: pre-wrap; margin-top: 10px;
         }
-
-        .card-content { padding: 20px; }
-        .card-title {
-            font-size: 1.25rem;
-            margin: 0 0 10px 0;
-            color: var(--accent-color);
-        }
-        .card-desc { font-size: 0.9rem; color: var(--sub-text); }
-
     </style>
 </head>
 <body>
 
-    <div id="top-page" class="page active">
-        <h1 class="title-large">ボブの秘密基地</h1>
-        <button class="enter-btn" onclick="showPage('main-page')">入口</button>
-        <div class="disclaimer">
-            このサイトはじゃりてんさんの運営するMST-SRというゲームの、個人的な攻略情報置き場です。<br>
-            データの正誤など一切の責任を負いませんのでご了承ください。
-        </div>
+<div class="top-section">
+    <header><h1>💣 Arms depot</h1></header>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('weapon')">⚔️ 武器一覧</button>
+        <button class="tab-btn" onclick="switchTab('equip')">🛡️ 装備一覧</button>
+        <button class="tab-btn" onclick="switchTab('system')">⚙️ 解説</button>
+    </div>
+    
+    <div class="search-area" id="search-wrapper">
+        <select id="search-column">
+            </select>
+        <input type="text" id="search-box" placeholder="キーワードを入力..." onkeyup="filterData()">
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="weapon" class="tab-content">
+        <table id="weapon-table">
+            <thead><tr id="weapon-head"></tr></thead>
+            <tbody id="weapon-body"></tbody>
+        </table>
     </div>
 
-    <div id="main-page" class="page">
-        <header>
-            <div class="logo">ボブの秘密基地</div>
-            <nav>
-                <a href="#">Arms</a>
-                <a href="#">Battle</a>
-                <a href="#">Tactics</a>
-                <a href="#">Link</a>
-            </nav>
-        </header>
-
-        <div class="container">
-            <div class="grid">
-                <a href="#" class="card">
-                    <div class="card-img">💣</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Arms depot</h3>
-                        <p class="card-desc">通常武器・装備のデータや独自システム「武器庫」についてページです。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">⚔️</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Battle Data</h3>
-                        <p class="card-desc">ボブ主催の大会などの戦闘記録置き場のページです。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">🚩</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Tactics</h3>
-                        <p class="card-desc">個人戦術・団体戦術・移動・距離など、戦術についての基礎知識のページです。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">🏹</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Hunter Chance</h3>
-                        <p class="card-desc">独自システム「ハンターチャンス」についての攻略ページです。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">🔍</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Trivia</h3>
-                        <p class="card-desc">地形、スキル、特性など、意外と知らない豆知識のページです。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">😆</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Emoji</h3>
-                        <p class="card-desc">プロフィールなどで使える絵文字のhtmlタグ一覧です。</p>
-                    </div>
-                </a>
-                <a href="#" class="card">
-                    <div class="card-img">⭕</div>
-                    <div class="card-content">
-                        <h3 class="card-title">Link</h3>
-                        <p class="card-desc">リンク集です。</p>
-                    </div>
-                </a>
-            </div>
-        </div>
+    <div id="equip" class="tab-content" style="display:none;">
+        <table id="equip-table">
+            <thead><tr id="equip-head"></tr></thead>
+            <tbody id="equip-body"></tbody>
+        </table>
     </div>
 
-    <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+    <div id="system" class="tab-content" style="display:none;">
+        <div class="info-box" id="system-content">読み込み中...</div>
+    </div>
+</div>
+
+<script>
+    // --- 1. CSV/TXT 外部ファイル読み込み処理 ---
+    async function loadData() {
+        try {
+            // 武器一覧の読み込み
+            const resW = await fetch('武器一覧.csv');
+            const txtW = await resW.text();
+            renderTable('weapon', txtW);
+
+            // 装備一覧の読み込み
+            const resE = await fetch('装備一覧.csv');
+            const txtE = await resE.text();
+            renderTable('equip', txtE);
+
+            // 解説の読み込み
+            const resS = await fetch('武器庫.txt');
+            const txtS = await resS.text();
+            document.getElementById('system-content').innerText = txtS;
+
+            // 初期検索項目のセットアップ
+            updateSearchOptions();
+        } catch (e) {
+            console.error("データの読み込みに失敗しました。GitHubにアップロードして確認してください。");
         }
-    </script>
+    }
+
+    function renderTable(type, csvData) {
+        const rows = csvData.split(/\r?\n/).filter(row => row.trim() !== '');
+        const headers = rows[0].split(',');
+        
+        // ヘッダー生成
+        document.getElementById(`${type}-head`).innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+        
+        // ボディ生成
+        const body = rows.slice(1).map(row => {
+            const cols = row.split(',');
+            return `<tr>${cols.map(c => `<td>${c}</td>`).join('')}</tr>`;
+        }).join('');
+        document.getElementById(`${type}-body`).innerHTML = body;
+    }
+
+    // --- 2. タブ切り替えと検索項目更新 ---
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).style.display = 'block';
+        event.currentTarget.classList.add('active');
+
+        // 解説タブでは検索を隠す
+        document.getElementById('search-wrapper').style.visibility = (tabName === 'system') ? 'hidden' : 'visible';
+        
+        updateSearchOptions();
+        document.getElementById('search-box').value = '';
+        filterData();
+    }
+
+    function updateSearchOptions() {
+        const activeTab = document.querySelector('.tab-content[style*="block"], .tab-content:not([style*="none"])');
+        const headers = activeTab.querySelectorAll('th');
+        const select = document.getElementById('search-column');
+        
+        let options = '<option value="all">すべての項目</option>';
+        headers.forEach((th, index) => {
+            options += `<option value="${index}">${th.innerText}</option>`;
+        });
+        select.innerHTML = options;
+    }
+
+    // --- 3. フィルタリング機能（項目別） ---
+    function filterData() {
+        const input = document.getElementById('search-box').value.toUpperCase();
+        const colIndex = document.getElementById('search-column').value;
+        const activeTab = document.querySelector('.tab-content[style*="block"], .tab-content:not([style*="none"])');
+        const rows = activeTab.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let match = false;
+            const cells = row.getElementsByTagName('td');
+            
+            if (colIndex === "all") {
+                match = row.innerText.toUpperCase().indexOf(input) > -1;
+            } else {
+                const targetCell = cells[colIndex];
+                if (targetCell && targetCell.innerText.toUpperCase().indexOf(input) > -1) {
+                    match = true;
+                }
+            }
+            row.style.display = match ? "" : "none";
+        });
+    }
+
+    // 初回読み込み実行
+    loadData();
+</script>
+
 </body>
 </html>
